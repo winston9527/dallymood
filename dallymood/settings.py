@@ -74,11 +74,25 @@ WSGI_APPLICATION = 'dallymood.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-DATABASES = {
+DATABASES2 = {
      'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
      },
+}
+
+
+DATABASES = {
+     'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'dallymood',
+            'USER': 'root',
+            # 'PASSWORD': 'lala0830',
+            # 'HOST': '34.151.80.22',
+            'PASSWORD': 'root',
+            'HOST': '127.0.0.1',
+            'POST': 3306,
+        },
 }
 """
         'default': {
@@ -86,6 +100,7 @@ DATABASES = {
             'NAME': 'dallymood',
             'USER': 'root',
             'PASSWORD': 'lala0830',
+            'HOST': '34.151.80.22',
             'HOST': '34.151.80.22',
             'POST': 3306,
         }

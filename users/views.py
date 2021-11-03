@@ -1,38 +1,43 @@
-import json
-
-from django.db import IntegrityError
 from django.http import JsonResponse
-from django.shortcuts import render
 
-# Create your views here.
-from django.views.generic import View
-from django.forms.models import model_to_dict
+from rest_framework.generics import GenericAPIView
 
 from users.models import Users
+from users.serializers import UserSerializer
+from utils import encrypt
 
 
-def register(request):
-    data = json.loads(request.body)
-    try:
-        user = Users.objects.create(**data)
-        user = model_to_dict(user)
-        return JsonResponse({'code': 201, 'message': 'created', 'data': user}, status=201)
-    except IntegrityError:
-        return JsonResponse({'code': 400, 'message': '身份证号码已存在！'}, status=200)
+class UsersView(GenericAPIView):
+    def get(self, request):
+        user = request.session.get('user_info', None)
+        if user:
+            return JsonResponse({'user': user})
+        else:
+            return JsonResponse({'message': 'please login first'}, status=401)
 
 
-def login(request):
-    data = json.loads(request.body)
-    print(data)
-    try:
-        user = Users.objects.create(**data)
-        user = model_to_dict(user)
-        return JsonResponse({'code': 201, 'message': 'created', 'data': user}, status=201)
-    except IntegrityError:
-        return JsonResponse({'code': 400, 'message': '身份证号码已存在！'}, status=200)
+class RegisterView(GenericAPIView):
+    def post(self, request):
+        user = UserSerializer(data=request.data)
+        if user.is_valid():
+            user.save()
+            return JsonResponse({'message': 'successful'}, status=201)
+        else:
+            print(user.errors)
+            return JsonResponse({'message': user.errors}, status=400)
 
 
-def get(self, request):
-    data = json.loads(request.body) if request.body else {}
-    users = list(Users.objects.filter(**data).all().values())
-    return JsonResponse({"list": users})
+class LoginView(GenericAPIView):
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        if not username or not password:
+            return JsonResponse({'message': 'username or password invalid'}, status=401)
+        user = Users.objects.filter(username=username).first()
+        encrypt_pwd = encrypt.md5(password)
+        if user and encrypt_pwd == user.password:
+            userSerializer = UserSerializer(user)
+            request.session["user_info"] = userSerializer.data
+            return JsonResponse({'message': 'successful', 'user': userSerializer.data})
+        else:
+            return JsonResponse({'message': 'username or password invalid'}, status=401)
