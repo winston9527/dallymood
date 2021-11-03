@@ -24,7 +24,7 @@ SECRET_KEY = '4qw++%xbd4h2#%e6813xc5=75f0i-i2&k4d0u#lm*90z2uxklw'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -39,11 +39,13 @@ INSTALLED_APPS = [
     # add
     'rest_framework',
     'users',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # CORS
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -75,24 +77,23 @@ WSGI_APPLICATION = 'dallymood.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES2 = {
-     'default': {
+    'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-     },
+    },
 }
 
-
 DATABASES = {
-     'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'dallymood',
-            'USER': 'root',
-            # 'PASSWORD': 'lala0830',
-            # 'HOST': '34.151.80.22',
-            'PASSWORD': 'root',
-            'HOST': '127.0.0.1',
-            'POST': 3306,
-        },
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'dallymood',
+        'USER': 'root',
+        # 'PASSWORD': 'lala0830',
+        # 'HOST': '34.151.80.22',
+        'PASSWORD': 'root',
+        'HOST': '127.0.0.1',
+        'POST': 3306,
+    },
 }
 """
         'default': {
@@ -142,3 +143,19 @@ APPEND_SLASH = False
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = ()
+
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+    'VIEW',
+)
+
+CORS_ALLOW_HEADERS = '*'
